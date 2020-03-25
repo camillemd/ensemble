@@ -64,10 +64,9 @@ spacy_nlp = fr_core_news_sm.load()
     iii) Download data.
 """
 
-X_train = pd.read_csv('X_train.csv')
-y_train = pd.read_csv('Y_train.csv')
-X_test = pd.read_csv('X_test.csv')
-
+X_train = pd.read_csv('data/X_train.csv')
+y_train = pd.read_csv('data/Y_train.csv')
+X_test = pd.read_csv('data/X_test.csv')
 
 #for testing if the model is running - remove before hand-in
 #remove 205 / 220 - uncomment 206 / 221
@@ -175,7 +174,6 @@ X_train['designation_cleaned'] = X_train['designation_cleaned'].apply(lambda x: 
 
 # X_test - step takes roughly ~2:20 min 
 X_test = cleaning(X_test)
-
 spacy_nlp = fr_core_news_sm.load()
 X_test['designation_cleaned'] = X_test['designation'].apply(lambda x: raw_to_tokens(x, spacy_nlp))
 spacy_nlp = spacy.load('en_core_web_sm')
@@ -187,8 +185,7 @@ X_test['designation_cleaned'] = X_test['designation_cleaned'].apply(lambda x: ra
 doc_clean_train =  X_train['designation_cleaned'].astype('U').tolist()
 doc_clean_test = X_test['designation_cleaned'].astype('U').tolist()
 #doc_clean = doc_clean_train + doc_clean_test
-doc_clean = doc_clean_train
-doc_clean_test = doc_clean_train + doc_clean_test
+doc_clean = doc_clean_train + doc_clean_test
 
 # import TfidfVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -197,29 +194,15 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 # convert raw documents into TF-IDF matrix.
 tfidf = TfidfVectorizer()
 X_tfidf = tfidf.fit_transform(doc_clean)
-
 print("Shape of the TF-IDF Train Matrix:")
 print(X_tfidf.shape)
 
 # if no transformation is applied i.e. no PCA / truncated SVD: 
 X_transformed = X_tfidf
 X_train_T = X_transformed[:1000]
+X_test_T = X_transformed[1000:]
 #X_train_T = X_transformed[:84916]
 print(X_train_T.shape) # 84916
-
-# X-test
-# convert raw documents into TF-IDF matrix.
-
-tfidf = TfidfVectorizer()
-X_tfidf = tfidf.fit_transform(doc_clean_test)
-
-print("Shape of the TF-IDF Test Matrix:")
-print(X_tfidf.shape)
-
-# if no transformation is applied i.e. no PCA / truncated SVD: 
-X_transformed = X_tfidf
-X_test_T = X_transformed[1000:]
-#X_test_T = X_transformed[84916:]
 print(X_test_T.shape) # 13812
 
 """
@@ -308,9 +291,9 @@ def model_grad_boosted_trees(X_train, y_train, X_test, y_test):
     @param: X_test - a numpy matrix containing features for test data (e.g. TF-IDF matrix)
     @param: y_test - a numpy array containing labels for each test sample
     """
-    clf = GradientBoostingClassifier(n_estimator = 30,
-                            max_depth = 50,
-                            learning_rate = 0.1) # please choose all necessary parameters
+    clf = GradientBoostingClassifier(n_estimator = 300,
+                                     max_depth = 8,
+                                     learning_rate = 0.15) # please choose all necessary parameters
     clf.fit(X_train, y_train)
 
     y_predicted = clf.predict(X_test)
@@ -334,8 +317,8 @@ def model_bagging(X_train, y_train, X_test, y_test):
                   }
 
     DTC = DecisionTreeClassifier(random_state = 11, 
-                             max_features = 0.8,
-                             max_depth = 6)
+                                 max_features = 0.8,
+                                 max_depth = 6)
 
     clf = BaggingClassifier(base_estimator = DTC) # please choose all necessary parameters
     clf.fit(X_train, y_train)
