@@ -28,10 +28,6 @@ import math
 # import TfidfVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-# dimension reduction
-from sklearn.decomposition import TruncatedSVD
-from sklearn.decomposition import SparsePCA
-
 # plots
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -57,7 +53,6 @@ from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import f1_score
 from sklearn.metrics import accuracy_score
 
-
 import re 
 """
     ii) Load spaCy for french.
@@ -72,7 +67,14 @@ spacy_nlp = fr_core_news_sm.load()
 X_train = pd.read_csv('X_train.csv')
 y_train = pd.read_csv('Y_train.csv')
 X_test = pd.read_csv('X_test.csv')
-y_test = y_train[:13812]
+
+
+#for testing if the model is running - remove before hand-in
+#remove 205 / 220 - uncomment 206 / 221
+X_train = X_train[:1000]
+y_train = y_train[:1000]
+X_test = X_test[:100]
+y_test = y_train[:100]
 
 """
     Pre-processing
@@ -201,7 +203,8 @@ print(X_tfidf.shape)
 
 # if no transformation is applied i.e. no PCA / truncated SVD: 
 X_transformed = X_tfidf
-X_train_T = X_transformed[:84916]
+X_train_T = X_transformed[:1000]
+#X_train_T = X_transformed[:84916]
 print(X_train_T.shape) # 84916
 
 # X-test
@@ -215,7 +218,8 @@ print(X_tfidf.shape)
 
 # if no transformation is applied i.e. no PCA / truncated SVD: 
 X_transformed = X_tfidf
-X_test_T = X_transformed[84916:]
+X_test_T = X_transformed[1000:]
+#X_test_T = X_transformed[84916:]
 print(X_test_T.shape) # 13812
 
 """
