@@ -78,6 +78,7 @@ y_test = y_train[:100]
 """
     Pre-processing
 """
+
 # designation and ids
 def cleaning(X_train): 
     X_train = X_train.drop(['description', 'productid','imageid'], axis=1)
@@ -368,12 +369,12 @@ if __name__ == "__main__":
     """
        This is just an example, please change as necessary. Just maintain final output format with proper names of the models as described above.
     """
-    model_1_acc, model_1_f1 = model_decision_classifier(X_train, y_train, X_test, y_test)
-    model_2_acc, model_2_f1 = model_random_forest(X_train, y_train, X_test, y_test)
-    model_3_acc, model_3_f1 = model_boosting(X_train, y_train, X_test, y_test)
-    model_4_acc, model_4_f1 = model_grad_boosted_trees(X_train, y_train, X_test, y_test)
-    model_5_acc, model_5_f1 = model_bagging(X_train, y_train, X_test, y_test)
-    model_6_acc, model_6_f1 = model_adaboost(X_train, y_train, X_test, y_test)
+    model_1_acc, model_1_f1 = model_decision_classifier(X_train_T, y_train, X_test_T, y_test)
+    model_2_acc, model_2_f1 = model_random_forest(X_train_T, y_train, X_test_T, y_test)
+    model_3_acc, model_3_f1 = model_boosting(X_train_T, y_train, X_test_T, y_test)
+    model_4_acc, model_4_f1 = model_grad_boosted_trees(X_train_T, y_train, X_test_T, y_test)
+    model_5_acc, model_5_f1 = model_bagging(X_train_T, y_train, X_test_T, y_test)
+    model_6_acc, model_6_f1 = model_adaboost(X_train_T, y_train, X_test_T, y_test)
         
         
     #model_1_acc, model_1_f1 = run_model_1(...)
@@ -391,3 +392,5 @@ if __name__ == "__main__":
     """
         etc.
     """
+    
+    ##last file
