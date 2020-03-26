@@ -80,10 +80,14 @@ y_test = y_train[:100]
 """
 
 # designation and ids
-def cleaning(X_train): 
+def cleaning_X(X_train): 
     X_train = X_train.drop(['description', 'productid','imageid'], axis=1)
     X_train.columns = ['integer_id', 'designation']
     return X_train
+
+def cleaning_Y(y_train): 
+    y_train = y_train.drop(['Unnamed: 0'], axis=1)
+    return y_train
 
 def normalize_accent(string):
     string = string.replace('á', 'a')
@@ -165,7 +169,7 @@ def raw_to_tokens(raw_string, spacy_nlp):
 ## Apply pre-processing
 
 # X_train - step takes roughly ~15:30 min 
-X_train = cleaning(X_train)
+X_train = cleaning_X(X_train)
 spacy_nlp = fr_core_news_sm.load() 
 X_train['designation_cleaned'] = X_train['designation'].apply(lambda x: raw_to_tokens(x, spacy_nlp))
 spacy_nlp = spacy.load('en_core_web_sm')
@@ -174,13 +178,16 @@ spacy_nlp = de_core_news_sm.load()
 X_train['designation_cleaned'] = X_train['designation_cleaned'].apply(lambda x: raw_to_tokens(x, spacy_nlp))
 
 # X_test - step takes roughly ~2:20 min 
-X_test = cleaning(X_test)
+X_test = cleaning_X(X_test)
 spacy_nlp = fr_core_news_sm.load()
 X_test['designation_cleaned'] = X_test['designation'].apply(lambda x: raw_to_tokens(x, spacy_nlp))
 spacy_nlp = spacy.load('en_core_web_sm')
 X_test['designation_cleaned'] = X_test['designation_cleaned'].apply(lambda x: raw_to_tokens(x, spacy_nlp))
 spacy_nlp = de_core_news_sm.load()
 X_test['designation_cleaned'] = X_test['designation_cleaned'].apply(lambda x: raw_to_tokens(x, spacy_nlp))
+
+y_train = cleaning_Y(y_train)
+y_test = cleaning_Y(y_test)
 
 # create a list from the processed cells
 doc_clean_train =  X_train['designation_cleaned'].astype('U').tolist()
@@ -203,6 +210,7 @@ X_transformed = X_tfidf
 X_train_T = X_transformed[:1000]
 X_test_T = X_transformed[1000:]
 #X_train_T = X_transformed[:84916]
+#X_test_T = X_transformed[84916:]
 print(X_train_T.shape) # 84916
 print(X_test_T.shape) # 13812
 
@@ -365,10 +373,15 @@ def model_adaboost(X_train, y_train, X_test, y_test):
    Please make sure that your code is outputting the performances in proper format, because your script will be run automatically by a meta-script.
 """
 
+
+
 if __name__ == "__main__":
     """
        This is just an example, please change as necessary. Just maintain final output format with proper names of the models as described above.
     """
+    
+    
+    
     model_1_acc, model_1_f1 = model_decision_classifier(X_train_T, y_train, X_test_T, y_test)
     model_2_acc, model_2_f1 = model_random_forest(X_train_T, y_train, X_test_T, y_test)
     model_3_acc, model_3_f1 = model_boosting(X_train_T, y_train, X_test_T, y_test)
@@ -393,4 +406,4 @@ if __name__ == "__main__":
         etc.
     """
     
-    ##last file
+    #final file
