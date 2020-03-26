@@ -54,167 +54,6 @@ from sklearn.metrics import f1_score
 from sklearn.metrics import accuracy_score
 
 import re 
-"""
-    ii) Load spaCy for french.
-"""
-
-spacy_nlp = fr_core_news_sm.load()
-
-"""
-    iii) Download data.
-"""
-
-X_train = pd.read_csv('data/X_train.csv')
-y_train = pd.read_csv('data/Y_train.csv')
-X_test = pd.read_csv('data/X_test.csv')
-
-#for testing if the model is running - remove before hand-in
-#remove 205 / 220 - uncomment 206 / 221
-X_train = X_train
-y_train = y_train
-X_test = X_test
-
-#fill-in y_test
-y_test = 
-
-"""
-    Pre-processing
-"""
-
-# designation and ids
-def cleaning_X(X_train): 
-    X_train = X_train.drop(['description', 'productid','imageid'], axis=1)
-    X_train.columns = ['integer_id', 'designation']
-    return X_train
-
-def cleaning_Y(y_train): 
-    y_train = y_train.drop(['Unnamed: 0'], axis=1)
-    return y_train
-
-def normalize_accent(string):
-    string = string.replace('á', 'a')
-    string = string.replace('â', 'a')
-
-    string = string.replace('é', 'e')
-    string = string.replace('è', 'e')
-    string = string.replace('ê', 'e')
-    string = string.replace('ë', 'e')
-
-    string = string.replace('î', 'i')
-    string = string.replace('ï', 'i')
-
-    string = string.replace('ö', 'o')
-    string = string.replace('ô', 'o')
-    string = string.replace('ò', 'o')
-    string = string.replace('ó', 'o')
-
-    string = string.replace('ù', 'u')
-    string = string.replace('û', 'u')
-    string = string.replace('ü', 'u')
-
-    string = string.replace('ç', 'c')
-    
-    return string
- 
-def del_digits(list): 
-    pattern = '[0-9]'
-    list = [re.sub(pattern, '', i) for i in list] 
-    return list
-
-def del_date(list): 
-    pattern = '^(?:(?:[0-9]{2}[:\/,]){2}[0-9]{2,4}|am|pm)$'
-    list = [re.sub(pattern, '', i) for i in list] 
-    return list
-
-def del_specialchar(list): 
-    pattern = '\W'
-    list = [re.sub(pattern, '', i) for i in list] 
-    return list
-
-def del_letters(list): 
-    for i in list:
-      if len(i) <= 1:
-        list.remove(i)
-    return list
-
-def raw_to_tokens(raw_string, spacy_nlp):
-    # Write code for lower-casing
-    string = raw_string.lower()
-    
-    # Write code to normalize the accents
-    string = normalize_accent(string)
-        
-    # Write code to tokenize
-    spacy_tokens = spacy_nlp(string)
-        
-    # Write code to remove punctuation tokens and create string tokens
-    string_tokens = [token.orth_ for token in spacy_tokens if not token.is_punct if not token.is_stop]
-
-    # Write code to remove digits
-    string_tokens = del_digits(string_tokens)
-
-    # Write code to remove special character
-    string_tokens = del_specialchar(string_tokens)
-
-    # Write code to remove dates
-    string_tokens = del_date(string_tokens)
-
-    # Write code to remove single letters
-    string_tokens = del_letters(string_tokens)
-    
-    # Write code to join the tokens back into a single string
-    clean_string = " ".join(string_tokens)
-
-    #return clean_string
-    return clean_string
-
-## Apply pre-processing
-
-# X_train - step takes roughly ~15:30 min 
-X_train = cleaning_X(X_train)
-spacy_nlp = fr_core_news_sm.load() 
-X_train['designation_cleaned'] = X_train['designation'].apply(lambda x: raw_to_tokens(x, spacy_nlp))
-spacy_nlp = spacy.load('en_core_web_sm')
-X_train['designation_cleaned'] = X_train['designation_cleaned'].apply(lambda x: raw_to_tokens(x, spacy_nlp))
-spacy_nlp = de_core_news_sm.load()
-X_train['designation_cleaned'] = X_train['designation_cleaned'].apply(lambda x: raw_to_tokens(x, spacy_nlp))
-
-# X_test - step takes roughly ~2:20 min 
-X_test = cleaning_X(X_test)
-spacy_nlp = fr_core_news_sm.load()
-X_test['designation_cleaned'] = X_test['designation'].apply(lambda x: raw_to_tokens(x, spacy_nlp))
-spacy_nlp = spacy.load('en_core_web_sm')
-X_test['designation_cleaned'] = X_test['designation_cleaned'].apply(lambda x: raw_to_tokens(x, spacy_nlp))
-spacy_nlp = de_core_news_sm.load()
-X_test['designation_cleaned'] = X_test['designation_cleaned'].apply(lambda x: raw_to_tokens(x, spacy_nlp))
-
-y_train = cleaning_Y(y_train)
-y_test = cleaning_Y(y_test)
-
-# create a list from the processed cells
-doc_clean_train =  X_train['designation_cleaned'].astype('U').tolist()
-doc_clean_test = X_test['designation_cleaned'].astype('U').tolist()
-#doc_clean = doc_clean_train + doc_clean_test
-doc_clean = doc_clean_train + doc_clean_test
-
-# import TfidfVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
-
-# X-train
-# convert raw documents into TF-IDF matrix.
-tfidf = TfidfVectorizer()
-X_tfidf = tfidf.fit_transform(doc_clean)
-print("Shape of the TF-IDF Train Matrix:")
-print(X_tfidf.shape)
-
-# if no transformation is applied i.e. no PCA / truncated SVD: 
-X_transformed = X_tfidf
-#X_train_T = X_transformed[:1000]
-#X_test_T = X_transformed[1000:]
-X_train_T = X_transformed[:84916]
-X_test_T = X_transformed[84916:]
-print(X_train_T.shape) # 84916
-print(X_test_T.shape) # 13812
 
 """
     Your methods implementing the models.
@@ -384,12 +223,12 @@ if __name__ == "__main__":
     
     #model_1_acc, model_1_f1 = run_model_1(...)
     
-    model_1_acc, model_1_f1 = model_decision_classifier(X_train_T, y_train, X_test_T, y_test)
-    model_2_acc, model_2_f1 = model_random_forest(X_train_T, y_train, X_test_T, y_test)
-    model_3_acc, model_3_f1 = model_boosting(X_train_T, y_train, X_test_T, y_test)
-    model_4_acc, model_4_f1 = model_grad_boosted_trees(X_train_T, y_train, X_test_T, y_test)
-    model_5_acc, model_5_f1 = model_bagging(X_train_T, y_train, X_test_T, y_test)
-    model_6_acc, model_6_f1 = model_adaboost(X_train_T, y_train, X_test_T, y_test)
+    model_1_acc, model_1_f1 = model_decision_classifier(X_train, y_train, X_test, y_test)
+    model_2_acc, model_2_f1 = model_random_forest(X_train, y_train, X_test, y_test)
+    model_3_acc, model_3_f1 = model_boosting(X_train, y_train, X_test, y_test)
+    model_4_acc, model_4_f1 = model_grad_boosted_trees(X_train, y_train, X_test, y_test)
+    model_5_acc, model_5_f1 = model_bagging(X_train, y_train, X_test, y_test)
+    model_6_acc, model_6_f1 = model_adaboost(X_train, y_train, X_test, y_test)
         
     """
         etc.
