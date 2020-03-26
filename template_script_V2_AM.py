@@ -70,10 +70,12 @@ X_test = pd.read_csv('data/X_test.csv')
 
 #for testing if the model is running - remove before hand-in
 #remove 205 / 220 - uncomment 206 / 221
-X_train = X_train[:1000]
-y_train = y_train[:1000]
-X_test = X_test[:100]
-y_test = y_train[:100]
+X_train = X_train
+y_train = y_train
+X_test = X_test
+
+#fill-in y_test
+y_test = 
 
 """
     Pre-processing
@@ -207,10 +209,10 @@ print(X_tfidf.shape)
 
 # if no transformation is applied i.e. no PCA / truncated SVD: 
 X_transformed = X_tfidf
-X_train_T = X_transformed[:1000]
-X_test_T = X_transformed[1000:]
-#X_train_T = X_transformed[:84916]
-#X_test_T = X_transformed[84916:]
+#X_train_T = X_transformed[:1000]
+#X_test_T = X_transformed[1000:]
+X_train_T = X_transformed[:84916]
+X_test_T = X_transformed[84916:]
 print(X_train_T.shape) # 84916
 print(X_test_T.shape) # 13812
 
@@ -300,7 +302,7 @@ def model_grad_boosted_trees(X_train, y_train, X_test, y_test):
     @param: X_test - a numpy matrix containing features for test data (e.g. TF-IDF matrix)
     @param: y_test - a numpy array containing labels for each test sample
     """
-    clf = GradientBoostingClassifier(n_estimator = 300,
+    clf = GradientBoostingClassifier(n_estimators = 300,
                                      max_depth = 8,
                                      learning_rate = 0.15) # please choose all necessary parameters
     clf.fit(X_train, y_train)
@@ -380,7 +382,7 @@ if __name__ == "__main__":
        This is just an example, please change as necessary. Just maintain final output format with proper names of the models as described above.
     """
     
-    
+    #model_1_acc, model_1_f1 = run_model_1(...)
     
     model_1_acc, model_1_f1 = model_decision_classifier(X_train_T, y_train, X_test_T, y_test)
     model_2_acc, model_2_f1 = model_random_forest(X_train_T, y_train, X_test_T, y_test)
@@ -389,8 +391,6 @@ if __name__ == "__main__":
     model_5_acc, model_5_f1 = model_bagging(X_train_T, y_train, X_test_T, y_test)
     model_6_acc, model_6_f1 = model_adaboost(X_train_T, y_train, X_test_T, y_test)
         
-        
-    #model_1_acc, model_1_f1 = run_model_1(...)
     """
         etc.
     """
@@ -406,4 +406,3 @@ if __name__ == "__main__":
         etc.
     """
     
-    #final file
